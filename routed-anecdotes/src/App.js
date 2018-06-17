@@ -1,13 +1,28 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
 
-const Menu = () => (
-  <div>
-    <a href='/'>anecdotes</a>&nbsp;
-    <a href='/create'>create new</a>&nbsp;
-    <a href='/about'>about</a>&nbsp;
+const Menu = () => {
+  const style = {
+    backgroundColor: '#f9cdcd',
+    margin: '10px',
+    padding: '10px'
+  }
+
+  const linkStyle = {
+    padding: '10px'
+  }
+
+  const active = {
+    backgroundColor: '#ff8d00'
+  }
+  return (
+    <div style={style}>
+      <NavLink to='/home' style={linkStyle} activeStyle={active}>anecdotes</NavLink>&nbsp;
+    <NavLink to='/create' style={linkStyle} activeStyle={active}>create new</NavLink>&nbsp;
+    <NavLink to='/about' style={linkStyle} activeStyle={active}>about</NavLink>&nbsp;
   </div>
-)
+  )
+}
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -19,8 +34,8 @@ const AnecdoteList = ({ anecdotes }) => (
 )
 
 const Notification = ({ notification }) => {
-  const style = {display: notification === "" ? 'none' : '', padding: '5px', border: '2px solid green', borderRadius: '4px', color: 'grey', marginTop: '10px', backgroundColor: 'lightgreen'}
- return ( <div style={style}>{notification}</div> )
+  const style = { display: notification === "" ? 'none' : '', padding: '5px', border: '2px solid green', borderRadius: '4px', color: 'grey', marginTop: '10px', backgroundColor: 'lightgreen' }
+  return (<div style={style}>{notification}</div>)
 }
 
 const DetailedAnecdote = ({ anec }) => (
@@ -70,17 +85,17 @@ class CreateNew extends React.Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-    handleSubmit = (e) => {
-      e.preventDefault()
-      this.props.addNew({
-        content: this.state.content,
-        author: this.state.author,
-        info: this.state.info,
-        votes: 0
-      })
-      this.props.history.push("/") 
-    }
-  
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.addNew({
+      content: this.state.content,
+      author: this.state.author,
+      info: this.state.info,
+      votes: 0
+    })
+    this.props.history.push("/home")
+  }
+
 
   render() {
     return (
@@ -136,8 +151,8 @@ class App extends React.Component {
 
   addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
-    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote), notification: `New anecdote "${anecdote.content}" created.`}, () => {
-      setTimeout(() => this.setState({notification: ""}), 10000)
+    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote), notification: `New anecdote "${anecdote.content}" created.` }, () => {
+      setTimeout(() => this.setState({ notification: "" }), 10000)
     })
   }
 
@@ -166,15 +181,16 @@ class App extends React.Component {
 
 
             <Menu />
-            
-            <Route exact path="/" render={() => { return (
-              <div>
-                <Notification notification={this.state.notification} />
-                <AnecdoteList anecdotes={this.state.anecdotes} />
-              </div> )
+
+            <Route exact path="/home" render={() => {
+              return (
+                <div>
+                  <Notification notification={this.state.notification} />
+                  <AnecdoteList anecdotes={this.state.anecdotes} />
+                </div>)
             }} />
-            <Route exact path="about" render={() => <About />} />
-            <Route exact path="/create" render={({history}) => <CreateNew addNew={this.addNew} history={history}  />} />
+            <Route exact path="/about" render={() => <About />} />
+            <Route exact path="/create" render={({ history }) => <CreateNew addNew={this.addNew} history={history} />} />
             <Route exact path="/anecdotes/:id" render={({ match }) => <DetailedAnecdote anec={this.anecdoteById(match.params.id)} />} />
 
             <Footer />
