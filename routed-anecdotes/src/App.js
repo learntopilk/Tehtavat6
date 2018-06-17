@@ -1,27 +1,31 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
-import { ListGroup, ListGroupItem, Grid, Col, Row, } from 'react-bootstrap'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { LinkContainer } from "react-router-bootstrap";
+import { ListGroup, ListGroupItem, Grid, Col, Row, FormGroup, FormControl, ControlLabel, Button, Alert, Navbar, NavItem, Nav } from 'react-bootstrap'
 
 const Menu = () => {
   const style = {
     backgroundColor: '#f9cdcd',
-    margin: '10px',
-    padding: '10px'
   }
 
-  const linkStyle = {
-    padding: '10px'
-  }
-
-  const active = {
-    backgroundColor: '#ff8d00'
-  }
   return (
-    <div style={style}>
-      <NavLink to='/home' style={linkStyle} activeStyle={active}>anecdotes</NavLink>&nbsp;
-    <NavLink to='/create' style={linkStyle} activeStyle={active}>create new</NavLink>&nbsp;
-    <NavLink to='/about' style={linkStyle} activeStyle={active}>about</NavLink>&nbsp;
-  </div>
+    <div>
+      <Navbar style={style}>
+      <Navbar.Header>
+        <Navbar.Brand>
+          Anecdote Application
+        </Navbar.Brand>
+        </Navbar.Header>
+      <Nav>
+
+            <LinkContainer to='/home' ><NavItem>anecdotes</NavItem></LinkContainer>&nbsp;
+
+            <LinkContainer to='/create' ><NavItem>create new</NavItem></LinkContainer>&nbsp;
+      
+            <LinkContainer to='/about' ><NavItem>about</NavItem></LinkContainer>&nbsp;
+       </Nav>
+      </Navbar>
+    </div>
   )
 }
 
@@ -35,18 +39,44 @@ const AnecdoteList = ({ anecdotes }) => (
 )
 
 const Notification = ({ notification }) => {
-  const style = { display: notification === "" ? 'none' : '', padding: '5px', border: '2px solid green', borderRadius: '4px', color: 'grey', marginTop: '10px', backgroundColor: 'lightgreen' }
-  return (<div style={style}>{notification}</div>)
+  const style = { display: notification === "" ? 'none' : '', marginTop: '10px', backgroundColor: 'lightgreen' }
+  return (<Alert style={style}>{notification}</Alert>)
 }
 
-const DetailedAnecdote = ({ anec }) => (
-  <div>
-    <h4>{anec.content}</h4>
-    <div>-{anec.author}</div>
-    <div>{anec.votes} votes</div>
-    <div><a href={anec.info}>See more about this anecdote</a></div>
-  </div>
-)
+const DetailedAnecdote = ({ anec }) => {
+  console.log(anec)
+
+  const anecFont = {
+    fontFamily: "'Slabo 27px', serif",
+    fontSize: '40px'
+  }
+
+  return (
+    <div style={{ marginTop: '20px', marginBottom: '20px', backgroundColor: '#fafafa' }}>
+      <Grid>
+        <Row xs={12} xm={12}>
+          <Col xs={12}>
+            <h4 style={anecFont}>{anec.content}</h4>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={2} xsOffset={1}>
+            <em>-{anec.author}</em>
+          </Col>
+          <Col xs={1} xm={1}>
+            <p>{anec.votes} votes</p>
+          </Col>
+
+        </Row>
+        <Row>
+          <Col xs={12} xm={12}>
+            <p><a href={anec.info}>See more about this anecdote</a></p>
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+  )
+}
 
 
 const About = () => (
@@ -54,11 +84,9 @@ const About = () => (
     <Col xs={8}>
       <div>
         <h2>About anecdote app</h2>
-
         <Row>
           <p>According to Wikipedia:</p>
         </Row>
-
         <Row>
           <Col xs={12} md={8}>
             <em>An anecdote is a brief, revealing account of an individual person or an incident.
@@ -67,15 +95,12 @@ const About = () => (
       An anecdote is "a story with a point."</em>
           </Col>
           <Col xs={6} md={4}>
-            <img style={ { width: '220px' } } src="https://upload.wikimedia.org/wikipedia/commons/6/67/Babbage40.png" />
+            <img alt="A drawing of Charles Babbage" style={{ width: '220px' }} src="https://upload.wikimedia.org/wikipedia/commons/6/67/Babbage40.png" />
           </Col>
-
         </Row>
-
         <Row>
           <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
         </Row>
-
       </div>
     </Col>
   </Grid>
@@ -115,26 +140,27 @@ class CreateNew extends React.Component {
     this.props.history.push("/home")
   }
 
-
   render() {
     return (
       <div>
         <h2>create a new anecdote</h2>
         <div>
           <form onSubmit={this.handleSubmit}>
-            <div>
-              content
-              <input name='content' value={this.state.content} onChange={this.handleChange} />
-            </div>
-            <div>
-              author
-              <input name='author' value={this.state.author} onChange={this.handleChange} />
-            </div>
-            <div>
-              url for more info
-              <input name='info' value={this.state.info} onChange={this.handleChange} />
-            </div>
-            <button>create</button>
+            <FormGroup>
+              <div>
+                <ControlLabel>content</ControlLabel>
+                <FormControl name='content' value={this.state.content} onChange={this.handleChange} />
+              </div>
+              <div>
+                <ControlLabel>author</ControlLabel>
+                <FormControl name='author' value={this.state.author} onChange={this.handleChange} />
+              </div>
+              <div>
+                <ControlLabel>url for more info</ControlLabel>
+                <FormControl name='info' value={this.state.info} onChange={this.handleChange} />
+              </div>
+              <Button type="submit">create</Button>
+            </FormGroup>
           </form>
         </div>
       </div>
@@ -191,16 +217,18 @@ class App extends React.Component {
     this.setState({ anecdotes })
   }
 
+  mainStyle = {
+    fontFamily: '"Open Sans" ,sans-serif',
+    backgroundColor: '#fcfcfc'
+  }
+
   render() {
     return (
-      <div className="container">
+      <div style={this.mainStyle} className="container">
         <h1>Software anecdotes</h1>
         <Router>
           <div>
-
-
             <Menu />
-
             <Route exact path="/home" render={() => {
               return (
                 <div>
@@ -211,7 +239,6 @@ class App extends React.Component {
             <Route exact path="/about" render={() => <About />} />
             <Route exact path="/create" render={({ history }) => <CreateNew addNew={this.addNew} history={history} />} />
             <Route exact path="/anecdotes/:id" render={({ match }) => <DetailedAnecdote anec={this.anecdoteById(match.params.id)} />} />
-
             <Footer />
           </div>
         </Router>
@@ -219,9 +246,5 @@ class App extends React.Component {
     );
   }
 }
-
-/*
-            <Link to='/'>Home  </Link>
-            <Link to='/create'>Create Anecdote  </Link> */
 
 export default App;
